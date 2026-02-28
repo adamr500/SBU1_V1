@@ -10,7 +10,6 @@ public class Turret {
 
     private final DcMotorEx turret;
 
-    // goBILDA 5203 series 1150 RPM (5.1:1) — 145.1 ticks per output shaft revolution
     private static final double TICKS_PER_REV    = 145.1;
     private static final double GEAR_RATIO        = 1.0; // external gear ratio if applicable
     private static final double TICKS_PER_DEGREE  = (TICKS_PER_REV * GEAR_RATIO) / 360.0;
@@ -27,6 +26,7 @@ public class Turret {
 //        this.turret.setDirection(DcMotorEx.Direction.REVERSE);
         this.turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.turret.setTargetPosition(0);
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION,
                 new PIDFCoefficients(kP, kI, kD, kF));
@@ -40,6 +40,14 @@ public class Turret {
 
     public boolean isAtTarget() {
         return !turret.isBusy();
+    }
+
+    public double getCurrentDegrees() {
+        return turret.getCurrentPosition() / TICKS_PER_DEGREE;
+    }
+
+    public double getTargetDegrees() {
+        return turret.getTargetPosition() / TICKS_PER_DEGREE;
     }
 
     // Call every loop in teleop, passing the angle from ShotCalculator
