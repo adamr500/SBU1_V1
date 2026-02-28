@@ -20,16 +20,13 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Prism;
 
 
 import static org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver.LayerHeight;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver;
-import org.firstinspires.ftc.teamcode.Prism.PrismAnimations;
 
 
 @TeleOp(name="LED Test", group="Linear OpMode")
@@ -42,8 +39,8 @@ public class GoBildaPrismExample extends LinearOpMode {
         waitForStart();
 
         PrismAnimations.Rainbow rainbow = new PrismAnimations.Rainbow();
-        rainbow.setSpeed(0.05f);   // very slow scroll (0=stopped, 1=fast)
-        rainbow.setRepeatAfter(1); // full rainbow spread across entire strip
+        rainbow.setSpeed(0.1f);    // scroll speed (0=stopped, 1=fast)
+        rainbow.setRepeatAfter(8); // number of rainbow cycles visible on the strip
         prism.insertAndUpdateAnimation(LayerHeight.LAYER_0, rainbow);
 
         while (opModeIsActive()) {

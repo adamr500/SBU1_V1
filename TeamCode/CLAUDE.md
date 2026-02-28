@@ -77,7 +77,7 @@ https://maven.brott.dev/                 — RoadRunner, MeepMeep
 - Learn Roadrunner docs: https://learnroadrunner.com/introduction.html
 - Sloth / Dairy Foundation Repo: https://github.com/Dairy-Foundation/Sloth 
 - MeepMeep Path Planner repo (There is also lots of information on the learn RR and RR docs): https://github.com/acmerobotics/MeepMeep
--My repo from last year (Good programming style which i like): https://github.com/adamr500/Ni4_Roadrunner_V1
+-My repo from last year (Good programming style which i like. However this may not br a correct/recommended style so take this with a pinch of salt): https://github.com/adamr500/Ni4_Roadrunner_V1
 - Official FTC DECODE season game manual: https://ftc-resources.firstinspires.org/ftc/game/manual
 ---
 
