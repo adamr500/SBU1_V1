@@ -22,15 +22,16 @@
 
 package org.firstinspires.ftc.teamcode.Prism;
 
-
 import static org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver.LayerHeight;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-
-@TeleOp(name="LED Test", group="Linear OpMode")
+@TeleOp(name = "LED Test", group = "Linear OpMode")
 public class GoBildaPrismExample extends LinearOpMode {
+
+    public static float SPEED           = 0.2f;
+    public static int   SPACING_BETWEEN = 5;
 
     @Override
     public void runOpMode() {
@@ -38,14 +39,13 @@ public class GoBildaPrismExample extends LinearOpMode {
 
         waitForStart();
 
-        PrismAnimations.Rainbow rainbow = new PrismAnimations.Rainbow();
-        rainbow.setSpeed(0.1f);    // scroll speed (0=stopped, 1=fast)
-        rainbow.setRepeatAfter(8); // number of rainbow cycles visible on the strip
-        prism.insertAndUpdateAnimation(LayerHeight.LAYER_0, rainbow);
+        PrismAnimations.Snakes snakes = new PrismAnimations.Snakes(Color.PINK);
+        snakes.setSpeed(SPEED);
+        snakes.setSpacingBetween(SPACING_BETWEEN);
+        prism.insertAndUpdateAnimation(LayerHeight.LAYER_0, snakes);
 
         while (opModeIsActive()) {
             sleep(100);
         }
     }
-
 }
