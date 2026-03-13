@@ -8,7 +8,7 @@ public class Stopper {
 
     private final Servo stopper;
 
-    private static final double STOPPER_CLOSED = 0.7;
+    private static final double STOPPER_CLOSED = 0.9;
     private static final double STOPPER_OPEN = 0.3;
 
     public Stopper(HardwareMap hardwareMap) {

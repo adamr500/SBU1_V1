@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -33,8 +34,9 @@ public class ShooterTest extends LinearOpMode {
 
         shooterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterRight.setDirection(DcMotorEx.Direction.REVERSE);
 
 
         double integralSum = 0;

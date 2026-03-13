@@ -40,9 +40,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.teamcode.roadrunnerdafault.MecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunnerdafault.OTOSLocalizer;
-import org.firstinspires.ftc.teamcode.roadrunnerdafault.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.hardware.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunnerdafault.TankDrive;
 import org.firstinspires.ftc.teamcode.roadrunnerdafault.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunnerdafault.TwoDeadWheelLocalizer;
