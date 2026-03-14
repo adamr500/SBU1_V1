@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Odo Pod Test", group = "Test")
+//@TeleOp(name = "Odo Pod Test", group = "Test")
 public class OdoPodTest extends LinearOpMode {
 
     @Override

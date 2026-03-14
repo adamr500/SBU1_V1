@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -16,6 +17,8 @@ public class Shooter {
     public static double Kp                   = 0.001;
     public static double Ki                   = 0.00000325;
     public static double Kd                   = 0.0;
+    public static double TARGET_RPM           = 1200;
+    public static double HOOD_POSITION        = 0.63;
     public static double RPM_TOLERANCE        = 50.0;
     public static double RPM_AGREEMENT_THRESH = 100.0; // use mean when both readings are within this
     public static double NEAR_ZERO_THRESH     = 50.0;  // treat a reading as "zero" if below this
@@ -26,6 +29,8 @@ public class Shooter {
 
     private DcMotorEx shooterLeft;
     private DcMotorEx shooterRight;
+    private Servo hoodLeft;
+    private Servo hoodRight;
 
     private double integralSum = 0;
     private double lastError   = 0;
@@ -40,6 +45,9 @@ public class Shooter {
     public void init(HardwareMap hardwareMap) {
         shooterLeft  = hardwareMap.get(DcMotorEx.class, "ShooterLeft");
         shooterRight = hardwareMap.get(DcMotorEx.class, "ShooterRight");
+
+        hoodLeft  = hardwareMap.get(Servo.class, "hoodLeft");
+        hoodRight = hardwareMap.get(Servo.class, "hoodRight");
 
         shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -133,6 +141,12 @@ public class Shooter {
         leftVariance  = 0;
         rightVariance = 0;
         timer.reset();
+    }
+
+    /** Sets hood angle. position is [0, 1]; the two servos mirror each other. */
+    public void setHoodPosition(double position) {
+        hoodRight.setPosition(position);
+        hoodLeft.setPosition(1.0 - position);
     }
 
     public void stop() {

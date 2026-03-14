@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Config
-@TeleOp(name = "Drivetrain Test", group = "Test")
+//@TeleOp(name = "Drivetrain Test", group = "Test")
 public class DrivetrainTest extends LinearOpMode {
 
     public static double DRIVE_SPEED = 0.8;

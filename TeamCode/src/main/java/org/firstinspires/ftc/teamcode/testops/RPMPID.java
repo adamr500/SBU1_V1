@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // Based on: https://www.ctrlaltftc.com/practical-examples/ftc-motor-control
 @Config
-@TeleOp(name = "Turret PID Test", group = "Test")
+//@TeleOp(name = "Turret PID Test", group = "Test")
 public class RPMPID extends LinearOpMode {
 
     static final double TICKS_PER_REV = 145.1;

@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.Prism;
+package org.firstinspires.ftc.teamcode.hardware.Prism;
 
 public class Color {
     public int red;
@@ -41,7 +41,7 @@ public class Color {
     }
 
     public static final Color RED         = new Color(255, 0,   0);
-    public static final Color ORANGE      = new Color(150, 255, 0);
+    public static final Color ORANGE      = new Color(50, 255, 0);
     public static final Color YELLOW      = new Color(255, 255, 0);
     public static final Color OLIVE       = new Color(128, 128, 0);
     public static final Color GREEN       = new Color(255,   0, 0);

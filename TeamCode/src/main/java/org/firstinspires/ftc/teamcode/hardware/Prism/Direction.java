@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.Prism;
+package org.firstinspires.ftc.teamcode.hardware.Prism;
 
 public enum Direction {
     Forward,

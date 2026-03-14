@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.RobotState;
+import org.firstinspires.ftc.teamcode.teleop.RobotState;
 import org.firstinspires.ftc.teamcode.hardware.MecanumDrive;
 
 @Autonomous(name = "AutoMain", group = "Autonomous")

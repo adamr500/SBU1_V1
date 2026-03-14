@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -19,7 +20,9 @@ public class ShooterTest extends LinearOpMode {
     public static double Kp         = 0.01;
     public static double Ki         = 0.001;
     public static double Kd         = 0.00001;
-    public static double TARGET_RPM = 0.0;
+    public static double TARGET_RPM = 2700;
+
+    public static double HOOD_POSITION = 0.55;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,6 +31,8 @@ public class ShooterTest extends LinearOpMode {
         DcMotorEx shooterLeft  = hardwareMap.get(DcMotorEx.class, "ShooterLeft");
         DcMotorEx shooterRight = hardwareMap.get(DcMotorEx.class, "ShooterRight");
         DcMotorEx intake       = hardwareMap.get(DcMotorEx.class, "Intake");
+        Servo hoodRight = hardwareMap.get(Servo.class, "hoodRight");
+        Servo hoodLeft = hardwareMap.get(Servo.class, "hoodLeft");
 
         shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -103,6 +108,9 @@ public class ShooterTest extends LinearOpMode {
             }
 
             timer.reset();
+
+            hoodRight.setPosition(HOOD_POSITION);
+            hoodLeft.setPosition(1-HOOD_POSITION);
 
             telemetry.addData("shooter", shooterEnabled ? "ON" : "OFF");
             telemetry.addData("target  (RPM)", TARGET_RPM);

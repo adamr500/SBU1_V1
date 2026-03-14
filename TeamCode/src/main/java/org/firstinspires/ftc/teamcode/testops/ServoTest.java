@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@TeleOp(name = "Servo Test", group = "Test")
+//@TeleOp(name = "Servo Test", group = "Test")
 public class ServoTest extends LinearOpMode {
 
     public static double HoodPosition = 0.5;

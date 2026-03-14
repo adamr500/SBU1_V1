@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.Prism.Color;
-import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver;
-import org.firstinspires.ftc.teamcode.Prism.PrismAnimations;
-import org.firstinspires.ftc.teamcode.RobotState;
+import org.firstinspires.ftc.teamcode.hardware.Prism.Color;
+import org.firstinspires.ftc.teamcode.hardware.Prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.hardware.Prism.PrismAnimations;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.hardware.Shooter;
 import org.firstinspires.ftc.teamcode.hardware.Stopper;
 
 import java.util.Locale;
@@ -29,7 +29,16 @@ public class TeleOpMain extends LinearOpMode {
         PinpointLocalizer pinpoint = (PinpointLocalizer) drive.localizer;
         Intake intake = new Intake(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
+        Shooter shooter = new Shooter();
+        shooter.init(hardwareMap);
         GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
+
+        // Turret: hold position using BRAKE zero-power behaviour
+        DcMotorEx turret = hardwareMap.get(DcMotorEx.class, "Turret");
+        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        turret.setPower(0);
 
         RobotMode mode = RobotMode.MOVING;
         RobotMode lastMode = null;
@@ -54,6 +63,9 @@ public class TeleOpMain extends LinearOpMode {
 
             // --- LED update (only on mode change) ---
             if (mode != lastMode) {
+                if (lastMode == RobotMode.SHOOTING) {
+                    shooter.stop();
+                }
                 switch (mode) {
                     case INTAKING:
                         prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
@@ -62,6 +74,9 @@ public class TeleOpMain extends LinearOpMode {
                     case SHOOTING:
                         prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
                                 new PrismAnimations.Solid(Color.PINK));
+                        shooter.update(Shooter.TARGET_RPM);
+                        shooter.setHoodPosition(Shooter.HOOD_POSITION);
+                        sleep(750);
                         break;
                     case MOVING:
                     default:
@@ -73,6 +88,7 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // --- State actions ---
+            double shooterPower = 0;
             switch (mode) {
                 case INTAKING:
                     intake.in();
@@ -80,14 +96,16 @@ public class TeleOpMain extends LinearOpMode {
                     break;
 
                 case SHOOTING:
-                    intake.off();
-                    // TODO: add shooting actions here
+                    intake.in();
+                    stopper.open();
+                    shooterPower = shooter.update(Shooter.TARGET_RPM);
+                    shooter.setHoodPosition(Shooter.HOOD_POSITION);
                     break;
 
                 case MOVING:
                 default:
                     intake.off();
-                    // TODO: add moving actions here
+                    stopper.close();
                     break;
             }
 
@@ -107,6 +125,14 @@ public class TeleOpMain extends LinearOpMode {
                     drive.localizer.getPose().position.x,
                     drive.localizer.getPose().position.y,
                     Math.toDegrees(heading)));
+            if (mode == RobotMode.SHOOTING) {
+                telemetry.addData("Shooter target (RPM)", Shooter.TARGET_RPM);
+                telemetry.addData("Shooter current (RPM)", shooter.getCurrentRPM());
+                telemetry.addData("Shooter error (RPM)", Shooter.TARGET_RPM - shooter.getCurrentRPM());
+                telemetry.addData("Shooter power", shooterPower);
+                telemetry.addData("Shooter ready", shooter.isReady);
+                telemetry.addData("Hood position", Shooter.HOOD_POSITION);
+            }
             telemetry.update();
         }
     }

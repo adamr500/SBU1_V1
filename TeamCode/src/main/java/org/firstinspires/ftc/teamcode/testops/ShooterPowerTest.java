@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@TeleOp(name = "Shooter Power Test", group = "Test")
+//@TeleOp(name = "Shooter Power Test", group = "Test")
 public class ShooterPowerTest extends LinearOpMode {
 
     static final double TICKS_PER_REV = 28.0;
