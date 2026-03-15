@@ -43,21 +43,7 @@ public class TeleOpMain extends LinearOpMode {
         boolean lastShooterReady = false;
         long lastLoopTime = System.nanoTime();
 
-        // ── Init phase: press Circle to toggle alliance ──────────────────────
         boolean circleHeld = false;
-        while (!isStarted() && !isStopRequested()) {
-            boolean circleNow = gamepad1.circle;
-            if (circleNow && !circleHeld) {
-                Global.alliance = (Global.alliance == Global.Alliance.RED)
-                        ? Global.Alliance.BLUE
-                        : Global.Alliance.RED;
-            }
-            circleHeld = circleNow;
-
-            telemetry.addData("Alliance (Circle to toggle)", Global.alliance);
-            telemetry.update();
-        }
-        // ─────────────────────────────────────────────────────────────────────
 
         waitForStart();
 
@@ -79,6 +65,15 @@ public class TeleOpMain extends LinearOpMode {
             } else {
                 mode = RobotMode.MOVING;
             }
+
+            //Alliance selector
+            boolean circleNow = gamepad1.circle;
+            if (circleNow && !circleHeld) {
+                Global.alliance = (Global.alliance == Global.Alliance.RED)
+                        ? Global.Alliance.BLUE
+                        : Global.Alliance.RED;
+            }
+            circleHeld = circleNow;
 
             // State actions
             switch (mode) {
@@ -141,7 +136,7 @@ public class TeleOpMain extends LinearOpMode {
             double rotLateral = -axial * Math.sin(h) + lateral * Math.cos(h);
 
             drive.setDrivePowers(new PoseVelocity2d(new Vector2d(rotAxial, rotLateral), yaw));
-            
+
             // Loop time
             long now = System.nanoTime();
             long loopNs = now - lastLoopTime;
