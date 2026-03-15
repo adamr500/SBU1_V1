@@ -24,6 +24,8 @@ public class Shooter {
     public double  calcHoodAngle = 0;
     public double  currentRPM    = 0;
 
+    public double goalDistance = 0;
+
     private DcMotorEx shooterLeft;
     private DcMotorEx shooterRight;
     private Servo hoodLeft;
@@ -56,7 +58,7 @@ public class Shooter {
         Vector2d target = Global.currentTarget();
         double currentX = -pose.position.x;
         double currentY =  pose.position.y;
-        double goalDistance = Math.hypot(target.x - currentX, target.y - currentY);
+        goalDistance = Math.hypot(currentX - target.x , currentY - -target.y);
 
         // Target RPM and hood angle from distance
         calcRPM       = Math.max(0, Math.min(5000, 0.000852363 * Math.pow(goalDistance, 3) - 0.208377 * Math.pow(goalDistance, 2) + 26.2241 * goalDistance + 1827.07895));

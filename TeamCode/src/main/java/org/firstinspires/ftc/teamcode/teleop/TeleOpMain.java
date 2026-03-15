@@ -43,7 +43,13 @@ public class TeleOpMain extends LinearOpMode {
         boolean lastShooterReady = false;
         long lastLoopTime = System.nanoTime();
 
+        // Corner pose reset
+        double RESET_X       =   62.0;
+        double RESET_Y       =  -62.0;
+        double RESET_HEADING =  90.0;
+
         boolean circleHeld = false;
+        boolean squareHeld = false;
 
         waitForStart();
 
@@ -74,6 +80,15 @@ public class TeleOpMain extends LinearOpMode {
                         : Global.Alliance.RED;
             }
             circleHeld = circleNow;
+
+            // Pose reset (drive robot into corner, then press square)
+            boolean squareNow = gamepad1.square;
+            if (squareNow && !squareHeld) {
+                double resetY       = (Global.alliance == Global.Alliance.BLUE) ? -RESET_Y       : RESET_Y;
+                double resetHeading = (Global.alliance == Global.Alliance.BLUE) ? -RESET_HEADING : RESET_HEADING;
+                drive.localizer.setPose(new Pose2d(RESET_X, resetY, Math.toRadians(resetHeading)));
+            }
+            squareHeld = squareNow;
 
             // State actions
             switch (mode) {
@@ -146,9 +161,10 @@ public class TeleOpMain extends LinearOpMode {
 
             // Telemetry
 //            dashTelemetry.addData("Mode: ", mode);
-//            dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
-//            dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
-//            dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
+           dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
+            dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
+            dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
+            dashTelemetry.addData("Distance from goal", shooter.goalDistance);
 //            dashTelemetry.addData("Shooter isReady", shooter.isReady);
 //            dashTelemetry.addData("Turret isReady", turret.isReady);
 //            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
