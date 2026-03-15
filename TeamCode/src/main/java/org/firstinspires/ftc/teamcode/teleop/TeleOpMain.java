@@ -5,9 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import org.firstinspires.ftc.teamcode.hardware.Prism.Color;
-import org.firstinspires.ftc.teamcode.hardware.Prism.GoBildaPrismDriver;
-import org.firstinspires.ftc.teamcode.hardware.Prism.PrismAnimations;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -36,8 +33,6 @@ public class TeleOpMain extends LinearOpMode {
         Turret turret = new Turret(hardwareMap);
         Shooter shooter = new Shooter();
         shooter.init(hardwareMap);
-        GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
-
         RobotMode mode = RobotMode.MOVING;
         RobotMode lastMode = null;
         long lastLoopTime = System.nanoTime();
@@ -105,21 +100,6 @@ public class TeleOpMain extends LinearOpMode {
                     break;
             }
 
-            // LEDs — only re-insert when mode changes to avoid flicker caused by
-            // the insert path resetting the slot to its default color before writing the target color.
-            if (mode != lastMode) {
-                if (mode == RobotMode.SHOOTING && turret.isReady && shooter.isReady) {
-                    prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, new PrismAnimations.Solid(Color.GREEN));
-                } else if (mode == RobotMode.SHOOTING) {
-                    prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, new PrismAnimations.Solid(Color.YELLOW));
-                } else if (mode == RobotMode.INTAKING) {
-                    prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, new PrismAnimations.Solid(Color.BLUE));
-                } else if (mode == RobotMode.MOVING) {
-                    prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, new PrismAnimations.Solid(Color.PINK));
-                }
-                lastMode = mode;
-            }
-
             // Drivetrain
             double axial      = -gamepad1.right_stick_y;
             double lateral    = -gamepad1.right_stick_x;
@@ -128,7 +108,6 @@ public class TeleOpMain extends LinearOpMode {
             double rotAxial   =  axial * Math.cos(h) + lateral * Math.sin(h);
             double rotLateral = -axial * Math.sin(h) + lateral * Math.cos(h);
 
-            drive.setDrivePowers(new PoseVelocity2d(new Vector2d(rotAxial, rotLateral), yaw));
 
             // Loop time
             long now = System.nanoTime();
