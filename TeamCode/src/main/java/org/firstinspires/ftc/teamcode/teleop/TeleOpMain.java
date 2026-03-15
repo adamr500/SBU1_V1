@@ -5,6 +5,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import org.firstinspires.ftc.teamcode.hardware.Prism.Color;
+import org.firstinspires.ftc.teamcode.hardware.Prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.hardware.Prism.PrismAnimations;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -33,8 +36,11 @@ public class TeleOpMain extends LinearOpMode {
         Turret turret = new Turret(hardwareMap);
         Shooter shooter = new Shooter();
         shooter.init(hardwareMap);
+        GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
+
         RobotMode mode = RobotMode.MOVING;
         RobotMode lastMode = null;
+        boolean lastShooterReady = false;
         long lastLoopTime = System.nanoTime();
 
         // ── Init phase: press Circle to toggle alliance ──────────────────────
@@ -100,6 +106,32 @@ public class TeleOpMain extends LinearOpMode {
                     break;
             }
 
+            // LEDs
+            boolean shooterReady = turret.isReady && shooter.isReady;
+            if (mode != lastMode || (mode == RobotMode.SHOOTING && shooterReady != lastShooterReady)) {
+                switch (mode) {
+                    case MOVING:
+                        prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
+                                new PrismAnimations.Solid(Color.PINK));
+                        break;
+                    case INTAKING:
+                        prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
+                                new PrismAnimations.Solid(Color.BLUE));
+                        break;
+                    case SHOOTING:
+                        if (shooterReady) {
+                            prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
+                                    new PrismAnimations.Solid(Color.GREEN));
+                        } else {
+                            prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
+                                    new PrismAnimations.Solid(Color.ORANGE));
+                        }
+                        break;
+                }
+                lastMode = mode;
+                lastShooterReady = shooterReady;
+            }
+
             // Drivetrain
             double axial      = -gamepad1.right_stick_y;
             double lateral    = -gamepad1.right_stick_x;
@@ -108,7 +140,8 @@ public class TeleOpMain extends LinearOpMode {
             double rotAxial   =  axial * Math.cos(h) + lateral * Math.sin(h);
             double rotLateral = -axial * Math.sin(h) + lateral * Math.cos(h);
 
-
+            drive.setDrivePowers(new PoseVelocity2d(new Vector2d(rotAxial, rotLateral), yaw));
+            
             // Loop time
             long now = System.nanoTime();
             long loopNs = now - lastLoopTime;
@@ -128,7 +161,7 @@ public class TeleOpMain extends LinearOpMode {
 //                    pose.position.y,
 //                    Math.toDegrees(heading)));
 //            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
-//            dashTelemetry.update();
+            dashTelemetry.update();
         }
     }
 }
