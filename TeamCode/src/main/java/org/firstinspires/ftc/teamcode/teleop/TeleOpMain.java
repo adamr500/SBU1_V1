@@ -1,20 +1,19 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.teamcode.hardware.Prism.Color;
-import org.firstinspires.ftc.teamcode.hardware.Prism.GoBildaPrismDriver;
-import org.firstinspires.ftc.teamcode.hardware.Prism.PrismAnimations;
+import org.firstinspires.ftc.teamcode.hardware.Global;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.MecanumDrive;
-import org.firstinspires.ftc.teamcode.hardware.PinpointLocalizer;
-import org.firstinspires.ftc.teamcode.hardware.Shooter;
 import org.firstinspires.ftc.teamcode.hardware.Stopper;
+import org.firstinspires.ftc.teamcode.hardware.Turret;
 
 import java.util.Locale;
 
@@ -25,34 +24,27 @@ public class TeleOpMain extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrive drive = new MecanumDrive(hardwareMap, RobotState.pose);
-        PinpointLocalizer pinpoint = (PinpointLocalizer) drive.localizer;
+        Telemetry dashTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        MecanumDrive drive = new MecanumDrive(hardwareMap, Global.pose);
         Intake intake = new Intake(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
-        Shooter shooter = new Shooter();
-        shooter.init(hardwareMap);
-        GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class, "prism");
-
-        // Turret: hold position using BRAKE zero-power behaviour
-        DcMotorEx turret = hardwareMap.get(DcMotorEx.class, "Turret");
-        turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        turret.setPower(0);
+        Turret turret = new Turret(hardwareMap, dashTelemetry);
 
         RobotMode mode = RobotMode.MOVING;
-        RobotMode lastMode = null;
-
-        // Set initial LED colour before start
-        prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
-                new PrismAnimations.Solid(Color.ORANGE));
+        long lastLoopTime = System.nanoTime();
 
         waitForStart();
+
+        turret.setHomeAtForward();
 
         while (opModeIsActive()) {
             drive.updatePoseEstimate();
 
-            // --- State transitions ---
+            Pose2d pose = drive.localizer.getPose();
+            double heading = pose.heading.toDouble();
+
+            // State change
             if (gamepad1.left_bumper) {
                 mode = RobotMode.INTAKING;
             } else if (gamepad1.right_bumper) {
@@ -61,34 +53,7 @@ public class TeleOpMain extends LinearOpMode {
                 mode = RobotMode.MOVING;
             }
 
-            // --- LED update (only on mode change) ---
-            if (mode != lastMode) {
-                if (lastMode == RobotMode.SHOOTING) {
-                    shooter.stop();
-                }
-                switch (mode) {
-                    case INTAKING:
-                        prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
-                                new PrismAnimations.Solid(Color.GREEN));
-                        break;
-                    case SHOOTING:
-                        prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
-                                new PrismAnimations.Solid(Color.PINK));
-                        shooter.update(Shooter.TARGET_RPM);
-                        shooter.setHoodPosition(Shooter.HOOD_POSITION);
-                        sleep(750);
-                        break;
-                    case MOVING:
-                    default:
-                        prism.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0,
-                                new PrismAnimations.Solid(Color.ORANGE));
-                        break;
-                }
-                lastMode = mode;
-            }
-
-            // --- State actions ---
-            double shooterPower = 0;
+            // State actions
             switch (mode) {
                 case INTAKING:
                     intake.in();
@@ -96,44 +61,43 @@ public class TeleOpMain extends LinearOpMode {
                     break;
 
                 case SHOOTING:
-                    intake.in();
-                    stopper.open();
-                    shooterPower = shooter.update(Shooter.TARGET_RPM);
-                    shooter.setHoodPosition(Shooter.HOOD_POSITION);
+                    turret.aim(pose);
                     break;
 
                 case MOVING:
                 default:
+                    turret.stop();
                     intake.off();
                     stopper.close();
                     break;
             }
 
-            // --- Drive (always active) ---
-            double heading    = drive.localizer.getPose().heading.toDouble();
+            // Drivetrain
             double axial      = -gamepad1.right_stick_y;
             double lateral    = -gamepad1.right_stick_x;
             double yaw        = -gamepad1.left_stick_x;
-            double rotAxial   =  axial * Math.cos(heading) + lateral * Math.sin(heading);
-            double rotLateral = -axial * Math.sin(heading) + lateral * Math.cos(heading);
+            double h = heading - Global.fieldCentricOffset;
+            double rotAxial   =  axial * Math.cos(h) + lateral * Math.sin(h);
+            double rotLateral = -axial * Math.sin(h) + lateral * Math.cos(h);
 
             drive.setDrivePowers(new PoseVelocity2d(new Vector2d(rotAxial, rotLateral), yaw));
 
-            // --- Telemetry ---
-            telemetry.addData("Mode", mode);
-            telemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
-                    drive.localizer.getPose().position.x,
-                    drive.localizer.getPose().position.y,
+            // Loop time
+            long now = System.nanoTime();
+            long loopNs = now - lastLoopTime;
+            lastLoopTime = now;
+            long loopMs = loopNs / 1_000_000;
+            long loopHz = loopNs > 0 ? 1_000_000_000L / loopNs : 0;
+
+            // Telemetry
+            dashTelemetry.addData("Mode: ", mode);
+            turret.telemetry(pose);
+            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
+                    pose.position.x,
+                    pose.position.y,
                     Math.toDegrees(heading)));
-            if (mode == RobotMode.SHOOTING) {
-                telemetry.addData("Shooter target (RPM)", Shooter.TARGET_RPM);
-                telemetry.addData("Shooter current (RPM)", shooter.getCurrentRPM());
-                telemetry.addData("Shooter error (RPM)", Shooter.TARGET_RPM - shooter.getCurrentRPM());
-                telemetry.addData("Shooter power", shooterPower);
-                telemetry.addData("Shooter ready", shooter.isReady);
-                telemetry.addData("Hood position", Shooter.HOOD_POSITION);
-            }
-            telemetry.update();
+            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
+            dashTelemetry.update();
         }
     }
 }

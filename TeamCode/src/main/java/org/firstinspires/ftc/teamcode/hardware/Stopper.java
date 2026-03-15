@@ -9,7 +9,7 @@ public class Stopper {
     private final Servo stopper;
 
     private static final double STOPPER_CLOSED = 0.9;
-    private static final double STOPPER_OPEN = 0.3;
+    private static final double STOPPER_OPEN = 0.5;
 
     public Stopper(HardwareMap hardwareMap) {
         this.stopper = hardwareMap.get(Servo.class, "stopper");

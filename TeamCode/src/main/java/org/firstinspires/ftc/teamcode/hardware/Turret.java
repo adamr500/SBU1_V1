@@ -1,95 +1,127 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.Locale;
+
+@Config
 public class Turret {
 
-    private final DcMotorEx turret;
+    public static double Kp = 0.03;
+    public static double Ki = 0;
+    public static double Kd = 0.001;
 
-    private static final double TICKS_PER_REV    = 145.1;
-    private static final double GEAR_RATIO        = 97.0 / 18.0;
-    private static final double TICKS_PER_DEGREE  = (TICKS_PER_REV * GEAR_RATIO) / 360.0;
-    private static final double SOFT_LIMIT        = 270.0; // max degrees either side of forward
+    private final Telemetry telemetry;
+    private final DcMotorEx motor;
 
-    // Tune these via FTC Dashboard
-    private static final double kP = 10.0;
-    private static final double kI = 0.0;
-    private static final double kD = 0.0;
-    private static final double kF = 0.0;
+    public static final double TICKS_PER_REV = 882.7;
+    public static final double TICKS_PER_DEG = TICKS_PER_REV / 360.0; // 2.4519
 
-    public Turret(HardwareMap hardwareMap) {
-        this.turret = hardwareMap.get(DcMotorEx.class, "turret");
-        this.turret.setDirection(DcMotorEx.Direction.FORWARD);
-        this.turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.turret.setTargetPosition(0);
-        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.turret.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION,
-                new PIDFCoefficients(kP, kI, kD, kF));
+    // Degrees from robot forward to the cable break point (positive = break point is to the left)
+    public static double BREAK_POINT_DEG = 40.0;
+
+    private double lastAngleDeg  = 0;
+    private double lastAngleTick = 0;
+    private double encoderOffset = 0;
+
+    private double      integralSum  = 0;
+    private double      lastError    = 0;
+    private double      lastPower    = 0;
+    private final ElapsedTime timer  = new ElapsedTime();
+
+    public Turret(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+
+        motor = hardwareMap.get(DcMotorEx.class, "Turret");
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    /**
-     * Normalises degrees to the equivalent angle within ±SOFT_LIMIT.
-     * Picks whichever of {degrees, degrees±360} is in range and closest to
-     * the current position — this is the "wrap-around" flip when a limit is hit.
-     */
-    private double constrainAngle(double degrees) {
-        // Normalise to (-180, 180]
-        degrees %= 360;
-        if (degrees >  180) degrees -= 360;
-        if (degrees < -180) degrees += 360;
+    public void aim(Pose2d pose) {
+        Vector2d target  = Global.currentTarget();
+        double targetX   = target.x;
+        double targetY   = target.y;
+        double currentX  = -pose.position.x;
+        double currentY  = pose.position.y;
 
-        double current  = getCurrentDegrees();
-        double best     = Double.NaN;
-        double bestDist = Double.MAX_VALUE;
+        double fieldAngle       = Math.atan2(targetY - currentY, targetX - currentX);
+        double angle            = fieldAngle + pose.heading.toDouble();
+        double deg              = Math.toDegrees(angle);
+        double normalizedDeg    = ((deg + 180) % 360 + 360) % 360 - 180;
+        double limitAdjustedDeg = normalizedDeg + BREAK_POINT_DEG;
+        double targetTicks      = limitAdjustedDeg * TICKS_PER_DEG + encoderOffset;
 
-        for (double candidate : new double[]{ degrees, degrees - 360, degrees + 360 }) {
-            if (candidate >= -SOFT_LIMIT && candidate <= SOFT_LIMIT) {
-                double dist = Math.abs(candidate - current);
-                if (dist < bestDist) {
-                    bestDist = dist;
-                    best = candidate;
-                }
-            }
+        // Wrap targetTicks into valid range [0, TICKS_PER_REV]
+        // PID will naturally take the shortest path, so this avoids crossing the break point
+        while (targetTicks > TICKS_PER_REV) {
+            targetTicks -= TICKS_PER_REV;
+        }
+        while (targetTicks < 0) {
+            targetTicks += TICKS_PER_REV;
         }
 
-        // Safety clamp — shouldn't be reached with a ±270 limit
-        if (Double.isNaN(best)) best = Math.max(-SOFT_LIMIT, Math.min(SOFT_LIMIT, degrees));
-        return best;
+        lastAngleDeg  = normalizedDeg;
+        lastAngleTick = targetTicks;
+
+        double current = motor.getCurrentPosition();
+        double error   = lastAngleTick - current;
+
+        if (Math.abs(error) <= 1.0) {
+            motor.setPower(0);
+            lastError = error;
+            lastPower = 0;
+            return;
+        }
+
+        double dt = timer.seconds();
+        timer.reset();
+
+        double derivative = (dt > 0) ? (error - lastError) / dt : 0;
+        integralSum      += error * dt;
+
+        double power = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+        power = Math.max(-1.0, Math.min(1.0, power));
+
+        motor.setPower(-power);
+        lastError = error;
+        lastPower = power;
     }
 
-    public void setAngle(double degrees) {
-        double constrained = constrainAngle(degrees);
-        turret.setTargetPosition((int) (constrained * TICKS_PER_DEGREE));
-        turret.setPower(1.0);
+    /** Call when turret is physically pointing straight forward.
+     *  Sets the encoder reference so that tick 0 = the cable break point. */
+    public void setHomeAtForward() {
+        encoderOffset = motor.getCurrentPosition() - (BREAK_POINT_DEG * TICKS_PER_DEG);
     }
 
-    public boolean isAtTarget() {
-        return !turret.isBusy();
+    public void stop() {
+        motor.setPower(0);
+        integralSum = 0;
+        lastError   = 0;
+        timer.reset();
     }
 
-    public double getCurrentDegrees() {
-        return turret.getCurrentPosition() / TICKS_PER_DEGREE;
-    }
+    public void telemetry(Pose2d pose) {
+        Vector2d target = Global.currentTarget();
+        double currentX = pose.position.x;
+        double currentY = pose.position.y;
 
-    public double getTargetDegrees() {
-        return turret.getTargetPosition() / TICKS_PER_DEGREE;
-    }
+        telemetry.addLine(String.format(Locale.US,
+                "T: (%.1f, %.1f) | C: (%.1f, %.1f) | A: (%.1f°, %.1ft)",
+                target.x, target.y, currentX, currentY, lastAngleDeg, lastAngleTick));
 
-    // Call every loop in teleop, passing the angle from ShotCalculator
-    public void update(double targetDegrees) {
-        setAngle(targetDegrees);
-    }
-
-    // Runs until the turret reaches the target angle, then completes
-    public Action aimAction(double degrees) {
-        return packet -> {
-            setAngle(degrees);
-            return turret.isBusy();
-        };
+        telemetry.addLine(String.format(Locale.US,
+                "Turret PID | cur: %d | tgt: %.1f | pwr: %.3f | break: %.1f°",
+                motor.getCurrentPosition(), lastAngleTick, lastPower, BREAK_POINT_DEG));
     }
 }
