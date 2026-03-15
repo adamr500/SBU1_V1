@@ -29,7 +29,7 @@ public class AutoMain extends LinearOpMode {
             }
             xHeld = xNow;
 
-            telemetry.addData("Alliance (X to toggle)", Global.alliance);
+            telemetry.addData("Alliance (Circle to toggle)", Global.alliance);
             telemetry.update();
         }
         // ────────────────────────────────────────────────────────────────────
