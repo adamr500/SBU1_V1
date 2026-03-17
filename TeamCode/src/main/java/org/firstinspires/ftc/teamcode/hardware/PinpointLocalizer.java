@@ -18,7 +18,7 @@ import java.util.Objects;
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
         public double parYTicks = 67.94582 / 25.4;
-        public double perpXTicks = 65.01026 / 25.4; //may need to be adjusted if robot spins around axis slightly furhter back due to rearward CoG
+        public double perpXTicks = -65.01026 / 25.4;
     }
 
     public static Params PARAMS = new Params();
