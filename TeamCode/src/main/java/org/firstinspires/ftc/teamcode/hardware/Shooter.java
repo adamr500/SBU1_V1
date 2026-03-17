@@ -17,7 +17,7 @@ public class Shooter {
     public static double Kp            = 0.01;
     public static double Ki            = 0.001;
     public static double Kd            = 0.00001;
-    public static double RPM_TOLERANCE = 50.0;
+    public static double RPM_TOLERANCE = 75;
 
     public boolean isReady       = false;
     public double  calcRPM       = 0;
@@ -56,9 +56,9 @@ public class Shooter {
     public void aim(Pose2d pose) {
         // Distance to goal
         Vector2d target = Global.currentTarget();
-        double currentX = -pose.position.x;
+        double currentX = pose.position.x;
         double currentY =  pose.position.y;
-        goalDistance = Math.hypot(currentX - target.x , currentY - -target.y);
+        goalDistance = Math.hypot(Math.abs(target.x - currentX), Math.abs(target.y - currentY));
 
         // Target RPM and hood angle from distance
         calcRPM       = Math.max(0, Math.min(5000, 0.000852363 * Math.pow(goalDistance, 3) - 0.208377 * Math.pow(goalDistance, 2) + 26.2241 * goalDistance + 1827.07895));

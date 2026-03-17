@@ -146,7 +146,7 @@ public class TeleOpMain extends LinearOpMode {
             double axial      = -gamepad1.right_stick_y;
             double lateral    = -gamepad1.right_stick_x;
             double yaw        = -gamepad1.left_stick_x;
-            double h = heading - Global.fieldCentricOffset;
+            double h = heading - Global.fieldCentricOffset+Math.toRadians(90);
             double rotAxial   =  axial * Math.cos(h) + lateral * Math.sin(h);
             double rotLateral = -axial * Math.sin(h) + lateral * Math.cos(h);
 
@@ -160,18 +160,18 @@ public class TeleOpMain extends LinearOpMode {
             long loopHz = loopNs > 0 ? 1_000_000_000L / loopNs : 0;
 
             // Telemetry
-//            dashTelemetry.addData("Mode: ", mode);
+           dashTelemetry.addData("Mode: ", mode);
            dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
             dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
             dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
             dashTelemetry.addData("Distance from goal", shooter.goalDistance);
-//            dashTelemetry.addData("Shooter isReady", shooter.isReady);
-//            dashTelemetry.addData("Turret isReady", turret.isReady);
-//            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
-//                    pose.position.x,
-//                    pose.position.y,
-//                    Math.toDegrees(heading)));
-//            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
+            dashTelemetry.addData("Shooter isReady", shooter.isReady);
+            dashTelemetry.addData("Turret isReady", turret.isReady);
+            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
+                    pose.position.x,
+                    pose.position.y,
+                    Math.toDegrees(heading)));
+            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
             dashTelemetry.update();
         }
     }

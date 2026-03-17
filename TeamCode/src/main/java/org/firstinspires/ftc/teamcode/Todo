@@ -1,0 +1,10 @@
+-Auto start positon
+-Corner re-localise positoin
+-Shooting accuracy
+-Shooter on all the time?
+-Shooter tracking all the time?
+
+-Maybe just do a defualt linear auto for now
+
+-gwt odometry working
+-Add upper and lower tolerance for RPM
