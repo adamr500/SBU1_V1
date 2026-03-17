@@ -17,8 +17,8 @@ import java.util.Objects;
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = -1509.466876141077;
-        public double perpXTicks = -1403.9229434037816;
+        public double parYTicks = 67.94582 / 25.4;
+        public double perpXTicks = 65.01026 / 25.4; //may need to be adjusted if robot spins around axis slightly furhter back due to rearward CoG
     }
 
     public static Params PARAMS = new Params();
@@ -30,18 +30,20 @@ public final class PinpointLocalizer implements Localizer {
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
 
     public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose) {
+        // TODO: make sure your config has a Pinpoint device with this name
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         driver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        driver.setOffsets(PARAMS.parYTicks, PARAMS.perpXTicks, DistanceUnit.MM);
+        driver.setOffsets(PARAMS.parYTicks * 25.4, PARAMS.perpXTicks * 25.4, DistanceUnit.MM);
 
+        // TODO: reverse encoder directions if needed
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
 
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
 
         driver.resetPosAndIMU();
-        try { Thread.sleep(300); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
 
         txWorldPinpoint = initialPose;
     }
