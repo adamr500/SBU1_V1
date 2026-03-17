@@ -45,7 +45,7 @@ public class Turret {
         Vector2d target  = Global.currentTarget();
         double targetX   = target.x;
         double targetY   = target.y;
-        double currentX  = -pose.position.x;
+        double currentX  = pose.position.x;
         double currentY  = pose.position.y;
 
         double fieldAngle       = Math.atan2(targetY - currentY, targetX - currentX);
