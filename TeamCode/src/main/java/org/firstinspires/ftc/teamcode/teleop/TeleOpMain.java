@@ -165,6 +165,8 @@ public class TeleOpMain extends LinearOpMode {
             dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
             dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
             dashTelemetry.addData("Distance from goal", shooter.goalDistance);
+            dashTelemetry.addData("Shooter currentX", shooter.currentX);
+            dashTelemetry.addData("Shooter currentY", shooter.currentY);
             dashTelemetry.addData("Shooter isReady", shooter.isReady);
             dashTelemetry.addData("Turret isReady", turret.isReady);
             dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",

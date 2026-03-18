@@ -25,6 +25,9 @@ public class Shooter {
     public double  currentRPM    = 0;
 
     public double goalDistance = 0;
+    public double currentX     = 0;
+    public double currentY     = 0;
+
 
     private DcMotorEx shooterLeft;
     private DcMotorEx shooterRight;
@@ -56,16 +59,16 @@ public class Shooter {
     public void aim(Pose2d pose) {
         // Distance to goal
         Vector2d target = Global.currentTarget();
-        double currentX = pose.position.x;
-        double currentY =  pose.position.y;
-        goalDistance = Math.hypot(Math.abs(target.x - currentX), Math.abs(target.y - currentY));
+        currentX = pose.position.x;
+        currentY = -pose.position.y;
+        double dX = Math.abs(target.x - currentX );
+        double dY = Math.abs(target.y - currentY);
+        goalDistance = Math.hypot(dX, dY);
+
 
         // Target RPM and hood angle from distance
         calcRPM       = Math.max(0, Math.min(5000, 0.000852363 * Math.pow(goalDistance, 3) - 0.208377 * Math.pow(goalDistance, 2) + 26.2241 * goalDistance + 1827.07895));
         calcHoodAngle = Math.max(0.4, Math.min(0.63, -(1.09516e-7) * Math.pow(goalDistance, 3) + 0.0000583541 * Math.pow(goalDistance, 2) - 0.00771199 * goalDistance + 0.797839));
-
-        hoodRight.setPosition(calcHoodAngle);
-        hoodLeft.setPosition(1 - calcHoodAngle);
 
         currentRPM = Math.abs(shooterRight.getVelocity()) / TICKS_PER_REV * 60.0;
         double effectiveRPM = currentRPM;
@@ -80,14 +83,19 @@ public class Shooter {
         integralSum      += error * dt;
 
         double power = Math.max(-1.0, Math.min(1.0, (Kp * error) + (Ki * integralSum) + (Kd * derivative)));
+
         shooterLeft.setPower(power);
         shooterRight.setPower(power);
+
+        hoodRight.setPosition(calcHoodAngle);
+        hoodLeft.setPosition(1 - calcHoodAngle);
 
         lastError = error;
         timer.reset();
 
         isReady = Math.abs(effectiveRPM - calcRPM) < RPM_TOLERANCE;
     }
+
 
     public void stop() {
         isReady     = false;

@@ -14,6 +14,6 @@ public class Global {
     public static Vector2d BLUE_TARGET = new Vector2d(-58, -53);
 
     public static Vector2d currentTarget() {
-        return alliance == Alliance.BLUE ? BLUE_TARGET : RED_TARGET;
+        return alliance == Alliance.RED ? RED_TARGET : BLUE_TARGET;
     }
 }
