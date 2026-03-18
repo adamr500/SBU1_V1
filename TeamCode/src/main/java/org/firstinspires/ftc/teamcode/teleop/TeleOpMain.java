@@ -160,15 +160,22 @@ public class TeleOpMain extends LinearOpMode {
             long loopHz = loopNs > 0 ? 1_000_000_000L / loopNs : 0;
 
             // Telemetry
-           dashTelemetry.addData("Mode: ", mode);
-           dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
-            dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
-            dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
-            dashTelemetry.addData("Distance from goal", shooter.goalDistance);
-            dashTelemetry.addData("Shooter currentX", shooter.currentX);
-            dashTelemetry.addData("Shooter currentY", shooter.currentY);
-            dashTelemetry.addData("Shooter isReady", shooter.isReady);
+           //dashTelemetry.addData("Mode: ", mode);
+           //dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
+            //dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
+            //dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
+            //dashTelemetry.addData("Distance from goal", shooter.goalDistance);
+            //dashTelemetry.addData("Shooter currentX", shooter.currentX);
+            //dashTelemetry.addData("Shooter currentY", shooter.currentY);
+            //dashTelemetry.addData("Shooter isReady", shooter.isReady);
+            dashTelemetry.addLine("-------------------------------------------------------------");
             dashTelemetry.addData("Turret isReady", turret.isReady);
+            dashTelemetry.addData("fieldAngle", turret.fieldAngle);
+            dashTelemetry.addData("fieldAngleDeg", turret.fieldAngleDeg);
+            dashTelemetry.addData("poseDeg", turret.fieldAngleDeg);
+            dashTelemetry.addData("robotAngle", turret.robotAngle);
+            dashTelemetry.addData("rawTicks", turret.rawTicks);
+            dashTelemetry.addLine("-------------------------------------------------------------");
             dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
                     pose.position.x,
                     pose.position.y,

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumDrive;
 public class AutoMain extends LinearOpMode {
 
     // Starting pose — update this to match where the robot is placed on the field
-    private static final Pose2d START_POSE = new Pose2d(0, 0, Math.PI);
+    private static final Pose2d START_POSE = new Pose2d(0, 0, 0);
 
     @Override
     public void runOpMode() {

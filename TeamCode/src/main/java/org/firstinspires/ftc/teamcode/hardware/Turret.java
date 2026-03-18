@@ -18,19 +18,20 @@ public class Turret {
     private final DcMotorEx motor;
 
     public static double TICKS_PER_REV = 785;
-    public static double HOME_OFFSET_DEG = 40;
-    public static double BREAK_POINT_TICKS = 0.0;
-
     public boolean isReady = false;
 
-    private double lastAngleDeg  = 0;
-    private double lastAngleTick = 0;
-    private double encoderOffset = 0;
+    //Turret calculation values
+    public double fieldAngle = 0;
+    public double fieldAngleDeg = 0;
+    public double robotAngle = 0;
+    public double rawTicks = 0;
 
+    //PID
     private double  integralSum = 0;
     private double  lastError   = 0;
     private double  lastPower   = 0;
-    private final ElapsedTime timer       = new ElapsedTime();
+
+    private final ElapsedTime timer = new ElapsedTime();
 
     public Turret(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "Turret");
@@ -43,26 +44,17 @@ public class Turret {
 
     public void aim(Pose2d pose) {
         Vector2d target  = Global.currentTarget();
-        double targetX   = target.x;
-        double targetY   = target.y;
-        double currentX  = pose.position.x;
-        double currentY  = pose.position.y;
 
-        double fieldAngle       = Math.atan2(targetY - currentY, targetX - currentX);
-        double angle            = fieldAngle + pose.heading.toDouble();
-        double deg              = Math.toDegrees(angle);
-        double normalizedDeg    = ((deg + 180) % 360 + 360) % 360 - 180;
-        double limitAdjustedDeg = normalizedDeg + HOME_OFFSET_DEG;
+        fieldAngle = Math.atan2(target.y + pose.position.y, target.x - pose.position.x);
+        fieldAngleDeg = Math.toDegrees(fieldAngle);
+        robotAngle = fieldAngleDeg + Math.toDegrees(pose.heading.toDouble());
 
-        double rawTicks = limitAdjustedDeg * (TICKS_PER_REV / 360.0);
-        double wrappedTicks = ((rawTicks - BREAK_POINT_TICKS) % TICKS_PER_REV + TICKS_PER_REV) % TICKS_PER_REV + BREAK_POINT_TICKS;
-        double targetTicks = wrappedTicks + encoderOffset;
+        rawTicks = robotAngle * (TICKS_PER_REV / 360.0);
 
-        lastAngleDeg  = normalizedDeg;
-        lastAngleTick = targetTicks;
 
+        //PID
         double current = motor.getCurrentPosition();
-        double error   = lastAngleTick - current;
+        double error   = rawTicks - current;
 
         isReady = Math.abs(error) <= TICK_TOLERANCE;
 
@@ -92,8 +84,9 @@ public class Turret {
     }
 
     public void setHomeAtForward() {
-        encoderOffset = motor.getCurrentPosition() - (HOME_OFFSET_DEG * (TICKS_PER_REV / 360.0));
-    }
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    };
 
     public void stop() {
         isReady     = false;
