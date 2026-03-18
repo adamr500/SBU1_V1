@@ -143,8 +143,8 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Drivetrain
-            double axial      = -gamepad1.right_stick_y;
-            double lateral    = -gamepad1.right_stick_x;
+            double axial      = gamepad1.right_stick_y;
+            double lateral    = gamepad1.right_stick_x;
             double yaw        = -gamepad1.left_stick_x;
             double h = heading - Global.fieldCentricOffset+Math.toRadians(90);
             double rotAxial   =  axial * Math.cos(h) + lateral * Math.sin(h);
