@@ -44,9 +44,9 @@ public class TeleOpMain extends LinearOpMode {
         long lastLoopTime = System.nanoTime();
 
         // Corner pose reset (Reset in top right for blue alliance)
-        double RESET_X       =  72 - 6.13; //Corner of the field (72 - Half of the robots' width)
-        double RESET_Y       =  72 - 6.77; //Corner of the field - half of hte robot length (length = distance from goemtric center to robot back)
-        double RESET_HEADING =  270; //Facing down (negative y)
+        double RESET_X       =  66; //Corner of the field (72 - Half of the robots' width)
+        double RESET_Y       =  65; //Corner of the field - half of hte robot length (length = distance from goemtric center to robot back)
+        double RESET_HEADING =  -90; //Facing down (negative y)
 
         boolean circleHeld = false;
         boolean squareHeld = false;
@@ -180,10 +180,10 @@ public class TeleOpMain extends LinearOpMode {
 //            dashTelemetry.addData("rawTicks", turret.rawTicks);
 //            dashTelemetry.addData("normalizedTicks", turret.normalizedTicks);
 //            dashTelemetry.addLine("-------------------------------------------------------------");
-//            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
-//                    pose.position.x,
-//                    pose.position.y,
-//                    Math.toDegrees(heading)));
+              dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
+                      pose.position.x,
+                      pose.position.y,
+                     Math.toDegrees(heading)));
 //            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
             dashTelemetry.update();
         }

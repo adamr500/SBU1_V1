@@ -13,8 +13,8 @@ public class Global {
     public static Pose2d pose = new Pose2d(0, 0, 0);
     public static Alliance alliance = Alliance.BLUE;
 
-    public static Vector2d RED_TARGET  = new Vector2d(-64, 58);
-    public static Vector2d BLUE_TARGET = new Vector2d(-64, -58);
+    public static Vector2d RED_TARGET  = new Vector2d(-58, 58);
+    public static Vector2d BLUE_TARGET = new Vector2d(-58, -58);
 
     public static Vector2d currentTarget() {
         return alliance == Alliance.RED ? BLUE_TARGET : RED_TARGET; //robot was tracking opposite goal so i just swapped RED and BLUE

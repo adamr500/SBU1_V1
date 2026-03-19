@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.hardware.Turret;
 @Autonomous(name = "AutoMain", group = "Autonomous")
 public class AutoMain extends LinearOpMode {
 
-    private static final Pose2d CLOSE_START_RED = new Pose2d(-42, 52, Math.toRadians(-90));
-    private static final Pose2d CLOSE_START_BLUE = new Pose2d(-42, -52, Math.toRadians(90));
+    private static final Pose2d CLOSE_START_RED = new Pose2d(-48, 53, Math.toRadians(0));
+    private static final Pose2d CLOSE_START_BLUE = new Pose2d(-48, -53, Math.toRadians(0));
 
-    private static final Pose2d FAR_START_RED   = new Pose2d(64, 18, Math.toRadians(180));
-    private static final Pose2d FAR_START_BLUE   = new Pose2d(64, -18, Math.toRadians(180));
+    private static final Pose2d FAR_START_RED   = new Pose2d(66, 18.2, Math.toRadians(180));
+    private static final Pose2d FAR_START_BLUE   = new Pose2d(66, -18.2, Math.toRadians(180));
 
 
     private static final Pose2d START_POSE = new Pose2d(0, 0, 0);

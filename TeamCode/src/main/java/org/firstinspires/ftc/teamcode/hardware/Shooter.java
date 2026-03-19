@@ -69,7 +69,7 @@ public class Shooter {
 
         // Target RPM and hood angle from distance
         calcRPM       = Math.max(0, Math.min(5000, 0.000852363 * Math.pow(goalDistance, 3) - 0.208377 * Math.pow(goalDistance, 2) + 26.2241 * goalDistance + 1827.07895));
-        calcHoodAngle = Math.max(0.4, Math.min(0.63, -(1.09516e-7) * Math.pow(goalDistance, 3) + 0.0000583541 * Math.pow(goalDistance, 2) - 0.00771199 * goalDistance + 0.797839));
+        calcHoodAngle = Math.max(0.4, Math.min(0.63, -(1.37297e-7) * Math.pow(goalDistance, 3) + 0.0000477985 * Math.pow(goalDistance, 2) - 0.00537148 * goalDistance + 0.742887));
 
         // Average both motor velocities for better accuracy
         double leftVel  = Math.abs(shooterLeft.getVelocity());
