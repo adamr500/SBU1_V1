@@ -164,28 +164,28 @@ public class TeleOpMain extends LinearOpMode {
 
             // Telemetry
            //dashTelemetry.addData("Mode: ", mode);
-           //dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
-            //dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
-            //dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
+           dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
+            dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
+            dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
             dashTelemetry.addData("Distance from goal", shooter.goalDistance);
             //dashTelemetry.addData("Shooter currentX", shooter.currentX);
             //dashTelemetry.addData("Shooter currentY", shooter.currentY);
-            //dashTelemetry.addData("Shooter isReady", shooter.isReady);
-            dashTelemetry.addData("Allaince", Global.alliance);
-            dashTelemetry.addLine("-------------------------------------------------------------");
-            dashTelemetry.addData("Turret isReady", turret.isReady);
-            dashTelemetry.addData("fieldAngle", turret.fieldAngle);
-            dashTelemetry.addData("fieldAngleDeg", turret.fieldAngleDeg);
-            dashTelemetry.addData("poseDeg", turret.fieldAngleDeg);
-            dashTelemetry.addData("robotAngleDeg", turret.robotAngleDeg);
-            dashTelemetry.addData("rawTicks", turret.rawTicks);
-            dashTelemetry.addData("normalizedTicks", turret.normalizedTicks);
-            dashTelemetry.addLine("-------------------------------------------------------------");
-            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
-                    pose.position.x,
-                    pose.position.y,
-                    Math.toDegrees(heading)));
-            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
+            dashTelemetry.addData("Shooter isReady", shooter.isReady);
+//            dashTelemetry.addData("Allaince", Global.alliance);
+//            dashTelemetry.addLine("-------------------------------------------------------------");
+//            dashTelemetry.addData("Turret isReady", turret.isReady);
+//            dashTelemetry.addData("fieldAngle", turret.fieldAngle);
+//            dashTelemetry.addData("fieldAngleDeg", turret.fieldAngleDeg);
+//            dashTelemetry.addData("poseDeg", turret.fieldAngleDeg);
+//            dashTelemetry.addData("robotAngleDeg", turret.robotAngleDeg);
+//            dashTelemetry.addData("rawTicks", turret.rawTicks);
+//            dashTelemetry.addData("normalizedTicks", turret.normalizedTicks);
+//            dashTelemetry.addLine("-------------------------------------------------------------");
+//            dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
+//                    pose.position.x,
+//                    pose.position.y,
+//                    Math.toDegrees(heading)));
+//            dashTelemetry.addLine(String.format(Locale.US, "%dHz | %dms", loopHz, loopMs));
             dashTelemetry.update();
         }
     }
