@@ -19,7 +19,7 @@ public class Shooter {
     public static double Ki = 0.00007;
     public static double Kd = 0.00015;
     public static double MAX_INTEGRAL  = 500;
-    public static double RPM_TOLERANCE = 50;
+    public static double RPM_TOLERANCE = 75;
 
     public boolean isReady       = false;
     public double  calcRPM       = 0;
