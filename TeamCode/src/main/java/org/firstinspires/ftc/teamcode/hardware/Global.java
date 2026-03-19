@@ -14,6 +14,6 @@ public class Global {
     public static Vector2d BLUE_TARGET = new Vector2d(-60, -53);
 
     public static Vector2d currentTarget() {
-        return alliance == Alliance.RED ? RED_TARGET : BLUE_TARGET;
+        return alliance == Alliance.RED ? BLUE_TARGET : RED_TARGET; //robot was tracking opposite goal so i just swapped RED and BLUE
     }
 }
