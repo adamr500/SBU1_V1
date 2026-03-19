@@ -43,10 +43,10 @@ public class TeleOpMain extends LinearOpMode {
         boolean lastShooterReady = false;
         long lastLoopTime = System.nanoTime();
 
-        // Corner pose reset
-        double RESET_X       =   62.0;
-        double RESET_Y       =  -62.0;
-        double RESET_HEADING =  90.0;
+        // Corner pose reset (Reset in top right for blue alliance)
+        double RESET_X       =  72 - 6.13; //Corner of the field (72 - Half of the robots' width)
+        double RESET_Y       =  72 - 6.77; //Corner of the field - half of hte robot length (length = distance from goemtric center to robot back)
+        double RESET_HEADING =  270; //Facing down (negative y)
 
         boolean circleHeld = false;
         boolean squareHeld = false;
@@ -164,10 +164,11 @@ public class TeleOpMain extends LinearOpMode {
            //dashTelemetry.addData("Shooter calcRPM", shooter.calcRPM);
             //dashTelemetry.addData("Shooter currentRPM", shooter.currentRPM);
             //dashTelemetry.addData("Shooter calcHoodAngle", shooter.calcHoodAngle);
-            //dashTelemetry.addData("Distance from goal", shooter.goalDistance);
+            dashTelemetry.addData("Distance from goal", shooter.goalDistance);
             //dashTelemetry.addData("Shooter currentX", shooter.currentX);
             //dashTelemetry.addData("Shooter currentY", shooter.currentY);
             //dashTelemetry.addData("Shooter isReady", shooter.isReady);
+            dashTelemetry.addData("Allaince", Global.alliance);
             dashTelemetry.addLine("-------------------------------------------------------------");
             dashTelemetry.addData("Turret isReady", turret.isReady);
             dashTelemetry.addData("fieldAngle", turret.fieldAngle);
@@ -175,6 +176,7 @@ public class TeleOpMain extends LinearOpMode {
             dashTelemetry.addData("poseDeg", turret.fieldAngleDeg);
             dashTelemetry.addData("robotAngleDeg", turret.robotAngleDeg);
             dashTelemetry.addData("rawTicks", turret.rawTicks);
+            dashTelemetry.addData("normalizedTicks", turret.normalizedTicks);
             dashTelemetry.addLine("-------------------------------------------------------------");
             dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",
                     pose.position.x,
