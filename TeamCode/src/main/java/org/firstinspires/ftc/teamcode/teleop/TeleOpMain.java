@@ -104,6 +104,8 @@ public class TeleOpMain extends LinearOpMode {
                     if (turret.isReady && shooter.isReady) {
                         stopper.open();
                         intake.in();
+                    } else  {
+                        intake.off();
                     }
                     break;
 
@@ -146,7 +148,8 @@ public class TeleOpMain extends LinearOpMode {
             double axial      = gamepad1.right_stick_y;
             double lateral    = gamepad1.right_stick_x;
             double yaw        = -gamepad1.left_stick_x;
-            double h = heading - Global.fieldCentricOffset+Math.toRadians(90);
+            double allianceOffset = (Global.alliance == Global.Alliance.BLUE) ? Math.PI : 0.0;
+            double h = heading - allianceOffset + Math.toRadians(90);
             double rotAxial   =  axial * Math.cos(h) + lateral * Math.sin(h);
             double rotLateral = -axial * Math.sin(h) + lateral * Math.cos(h);
 

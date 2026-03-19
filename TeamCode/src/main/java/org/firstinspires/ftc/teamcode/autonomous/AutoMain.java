@@ -57,9 +57,7 @@ public class AutoMain extends LinearOpMode {
             startPose = (zone == Zone.CLOSE) ? CLOSE_START_BLUE : FAR_START_BLUE;
         }
 
-        Global.fieldCentricOffset = startPose.heading.toDouble();
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-
         waitForStart();
 
         // TODO: add actions and pathing here

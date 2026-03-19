@@ -9,3 +9,9 @@
 -Corner re-localise positoin (Verify empirically at langley)
 -Make sure field centric is flipped correctly for blue allaince driving
 -Auto start positon (Verify empirically at langley)
+
+
+
+
+after break:
+-fix field centric yaw carry over form auto
