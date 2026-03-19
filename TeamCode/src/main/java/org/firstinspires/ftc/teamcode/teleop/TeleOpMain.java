@@ -84,8 +84,8 @@ public class TeleOpMain extends LinearOpMode {
             // Pose reset (drive robot into corner, then press square)
             boolean squareNow = gamepad1.square;
             if (squareNow && !squareHeld) {
-                double resetY       = (Global.alliance == Global.Alliance.BLUE) ? -RESET_Y       : RESET_Y;
-                double resetHeading = (Global.alliance == Global.Alliance.BLUE) ? -RESET_HEADING : RESET_HEADING;
+                double resetY       = (Global.alliance == Global.Alliance.BLUE) ? RESET_Y       : -RESET_Y;
+                double resetHeading = (Global.alliance == Global.Alliance.BLUE) ? RESET_HEADING : -RESET_HEADING;
                 drive.localizer.setPose(new Pose2d(RESET_X, resetY, Math.toRadians(resetHeading)));
             }
             squareHeld = squareNow;
