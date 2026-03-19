@@ -10,8 +10,8 @@ public class Global {
     public static double fieldCentricOffset = 0; // set by auto to START_POSE heading
     public static Alliance alliance = Alliance.BLUE;
 
-    public static Vector2d RED_TARGET  = new Vector2d(-60, 60);
-    public static Vector2d BLUE_TARGET = new Vector2d(-60, -60);
+    public static Vector2d RED_TARGET  = new Vector2d(-60, 53);
+    public static Vector2d BLUE_TARGET = new Vector2d(-60, -53);
 
     public static Vector2d currentTarget() {
         return alliance == Alliance.RED ? RED_TARGET : BLUE_TARGET;

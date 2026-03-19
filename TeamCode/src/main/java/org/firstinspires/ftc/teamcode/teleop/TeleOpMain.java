@@ -173,7 +173,7 @@ public class TeleOpMain extends LinearOpMode {
             dashTelemetry.addData("fieldAngle", turret.fieldAngle);
             dashTelemetry.addData("fieldAngleDeg", turret.fieldAngleDeg);
             dashTelemetry.addData("poseDeg", turret.fieldAngleDeg);
-            dashTelemetry.addData("robotAngle", turret.robotAngle);
+            dashTelemetry.addData("robotAngleDeg", turret.robotAngleDeg);
             dashTelemetry.addData("rawTicks", turret.rawTicks);
             dashTelemetry.addLine("-------------------------------------------------------------");
             dashTelemetry.addLine(String.format(Locale.US, "X: %.2f | Y: %.2f | H: %.2f",

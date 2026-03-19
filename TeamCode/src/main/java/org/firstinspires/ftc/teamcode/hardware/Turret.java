@@ -18,13 +18,17 @@ public class Turret {
     private final DcMotorEx motor;
 
     public static double TICKS_PER_REV = 785;
+    public static double MAX_TICKS = 698; //  ( 40 - 360 ) / 360 * TICKS_PER_REV
+    public static double MIN_TICKS = MAX_TICKS - TICKS_PER_REV;
+
     public boolean isReady = false;
 
     //Turret calculation values
     public double fieldAngle = 0;
     public double fieldAngleDeg = 0;
-    public double robotAngle = 0;
+    public double robotAngleDeg = 0;
     public double rawTicks = 0;
+    public double normalizedTicks = 0;
 
     //PID
     private double  integralSum = 0;
@@ -47,14 +51,13 @@ public class Turret {
 
         fieldAngle = Math.atan2(target.y + pose.position.y, target.x - pose.position.x);
         fieldAngleDeg = Math.toDegrees(fieldAngle);
-        robotAngle = fieldAngleDeg + Math.toDegrees(pose.heading.toDouble());
-
-        rawTicks = robotAngle * (TICKS_PER_REV / 360.0);
-
+        robotAngleDeg = fieldAngleDeg + Math.toDegrees(pose.heading.toDouble());
+        rawTicks = robotAngleDeg * (TICKS_PER_REV / 360.0);
+        normalizedTicks = ((rawTicks - MIN_TICKS) % TICKS_PER_REV + TICKS_PER_REV) % TICKS_PER_REV + MIN_TICKS;
 
         //PID
         double current = motor.getCurrentPosition();
-        double error   = rawTicks - current;
+        double error   = normalizedTicks - current;
 
         isReady = Math.abs(error) <= TICK_TOLERANCE;
 

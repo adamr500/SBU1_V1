@@ -1,9 +1,10 @@
-//Todo
--Auto start positon
--Corner re-localise positoin
--Shooting accuracy
--Shooter on all the time?
--Shooter tracking all the time?
+//ToDo
 
--gwt odometry working
+
+
+
+-retune flywheel pid
+-make intake more torque
+-Corner re-localise positoin
+-Auto start positon
 -Add upper and lower tolerance for RPM
