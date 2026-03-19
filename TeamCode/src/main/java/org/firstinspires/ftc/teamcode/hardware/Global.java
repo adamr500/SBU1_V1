@@ -7,7 +7,7 @@ public class Global {
     public enum Alliance { RED, BLUE }
 
     public static Pose2d pose = new Pose2d(0, 0, 0);
-    public static double fieldCentricOffset = 0; // set by auto to START_POSE heading
+    public static double fieldCentricOffset = 0; // DO NOT TOUCH! set by autonomous for auto -> teleop pose carry over
     public static Alliance alliance = Alliance.BLUE;
 
     public static Vector2d RED_TARGET  = new Vector2d(-60, 53);
