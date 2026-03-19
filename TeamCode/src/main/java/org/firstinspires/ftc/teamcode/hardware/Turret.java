@@ -86,7 +86,7 @@ public class Turret {
         lastPower = power;
     }
 
-    public void setHomeAtForward() {
+    public void resetEncoders() {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     };

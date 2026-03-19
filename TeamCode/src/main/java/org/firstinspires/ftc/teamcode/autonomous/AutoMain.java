@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.Global;
 import org.firstinspires.ftc.teamcode.hardware.MecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.Shooter;
+import org.firstinspires.ftc.teamcode.hardware.Turret;
 
 @Autonomous(name = "AutoMain", group = "Autonomous")
 public class AutoMain extends LinearOpMode {
@@ -21,12 +24,18 @@ public class AutoMain extends LinearOpMode {
 
     enum Zone { CLOSE, FAR }
 
+    Turret turret;
+
     @Override
     public void runOpMode() {
+
+        turret = new Turret(hardwareMap);
 
         Zone zone = Zone.CLOSE;
 
         // ── Init phase ───────────────────────────────────────────────────────
+        turret.resetEncoders();
+
         boolean circleHeld = false;
         boolean triangleHeld = false;
         while (!isStarted() && !isStopRequested()) {

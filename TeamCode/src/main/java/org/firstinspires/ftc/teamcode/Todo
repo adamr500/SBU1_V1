@@ -4,7 +4,8 @@
 
 
 -retune flywheel pid
--Add upper and lower tolerance for RPM
 
 -Find exact corner re-localise position
 -Find exact auto start position
+-Decide point to aim at
+-Maybe re-do hood and rpm function?

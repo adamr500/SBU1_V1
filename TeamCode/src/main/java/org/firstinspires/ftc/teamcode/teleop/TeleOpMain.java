@@ -53,7 +53,6 @@ public class TeleOpMain extends LinearOpMode {
 
         waitForStart();
 
-        turret.setHomeAtForward();
         shooter.stop();
         turret.stop();
 
@@ -105,7 +104,7 @@ public class TeleOpMain extends LinearOpMode {
                         stopper.open();
                         intake.in();
                     } else  {
-                        intake.off();
+                        //intake.off();
                     }
                     break;
 

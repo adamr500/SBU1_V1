@@ -14,12 +14,12 @@ public class Shooter {
 
     static final double TICKS_PER_REV = 28.0;
 
-    public static double Kf            = 0.00018;  // feedforward — tune this FIRST
-    public static double Kp            = 0.01;
-    public static double Ki            = 0.001;
-    public static double Kd            = 0.00001;
-    public static double MAX_INTEGRAL  = 500;       // integral windup cap
-    public static double RPM_TOLERANCE = 75;
+    public static double Kf = 0.00038;
+    public static double Kp = 0.003;
+    public static double Ki = 0.00007;
+    public static double Kd = 0.00015;
+    public static double MAX_INTEGRAL  = 500;
+    public static double RPM_TOLERANCE = 50;
 
     public boolean isReady       = false;
     public double  calcRPM       = 0;
@@ -74,11 +74,11 @@ public class Shooter {
         // Average both motor velocities for better accuracy
         double leftVel  = Math.abs(shooterLeft.getVelocity());
         double rightVel = Math.abs(shooterRight.getVelocity());
-        currentRPM = ((leftVel + rightVel) / 2.0) / TICKS_PER_REV * 60.0;
+        double currentTicksPerSec = (leftVel + rightVel) / 2.0;
+        currentRPM = currentTicksPerSec / TICKS_PER_REV * 60.0;
 
         // PIDF control
-        double targetTicksPerSec  = calcRPM    * TICKS_PER_REV / 60.0;
-        double currentTicksPerSec = currentRPM * TICKS_PER_REV / 60.0;
+        double targetTicksPerSec = calcRPM * TICKS_PER_REV / 60.0;
         double error              = targetTicksPerSec - currentTicksPerSec;
 
         double dt         = timer.seconds();
@@ -101,8 +101,6 @@ public class Shooter {
 
         isReady = Math.abs(currentRPM - calcRPM) < RPM_TOLERANCE;
     }
-
-
     public void stop() {
         isReady     = false;
         integralSum = 0;
